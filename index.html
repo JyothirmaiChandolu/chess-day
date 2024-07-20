@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Board</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            flex-direction: column;
+        }
+
+        .navbar {
+            width: 100%;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 40px;
+            position: fixed;
+            top: 0;
+            overflow: hidden;
+        }
+
+
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 50px);
+            grid-template-rows: repeat(8, 50px);
+            border: 2px solid #333;
+            position: relative;
+            margin-top: 60px;
+        }
+
+        .cell {
+            width: 50px;
+            height: 50px;
+        }
+
+        .black {
+            background-color: #769656;
+        }
+
+        .white {
+            background-color: #eeeed2;
+        }
+
+        .piece {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            font-size: 40px;
+            text-align: center;
+            line-height: 50px;
+            transition: transform 1s;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 2px solid #333;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            z-index: 10;
+        }
+
+        .popup p {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <scroll>Happy International Chess Day</scroll>
+    </div>
+    <div class="chessboard" id="chessboard">
+        <!-- Board cells will be generated here -->
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <p>"When you see a good move, look for a better one." - Emanuel Lasker</p>
+    </div>
+
+    <script>
+        function createBoard() {
+            const board = document.getElementById('chessboard');
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    if ((i + j) % 2 === 0) {
+                        cell.classList.add('white');
+                    } else {
+                        cell.classList.add('black');
+                    }
+                    board.appendChild(cell);
+                }
+            }
+        }
+
+        function placePiece(piece, x, y) {
+            piece.style.transform = `translate(${x * 50}px, ${y * 50}px)`;
+        }
+
+        function movePiece(pieceId, x, y) {
+            const piece = document.getElementById(pieceId);
+            if (piece) {
+                placePiece(piece, x, y);
+            }
+        }
+
+        function showPopup() {
+            const overlay = document.getElementById('overlay');
+            const popup = document.getElementById('popup');
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+        }
+
+        function playMoves() {
+            const moves = [
+                { pieceId: 'pawn1', x: 0, y: 2 },
+                { pieceId: 'pawn9', x: 0, y: 5 },
+                { pieceId: 'pawn2', x: 1, y: 2 },
+                { pieceId: 'knight3', x: 2, y: 5 },
+                { pieceId: 'bishop1', x: 6, y: 4 },
+                { pieceId: 'pawn10', x: 1, y: 5 },
+                { pieceId: 'bishop1', x: 4, y: 2 },
+                { pieceId: 'queen2', x: 3, y: 5 },
+                { pieceId: 'bishop1', x: 1, y: 5 },
+                { pieceId: 'pawn10', x: 8, y: 3 },
+                { pieceId: 'queen2', x: 2, y: 4 },
+                { pieceId: 'queen', x: 3, y: 3 },
+            ];
+
+            moves.forEach((move, index) => {
+                setTimeout(() => movePiece(move.pieceId, move.x, move.y), index * 2000);
+            });
+
+            setTimeout(showPopup, moves.length * 2000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createBoard();
+
+            const pieces = [
+                { id: 'rook1', piece: '♖', x: 0, y: 0 },
+                { id: 'knight1', piece: '♘', x: 1, y: 0 },
+                { id: 'bishop1', piece: '♗', x: 2, y: 0 },
+                { id: 'queen', piece: '♕', x: 3, y: 0 },
+                { id: 'king', piece: '♔', x: 4, y: 0 },
+                { id: 'bishop2', piece: '♗', x: 5, y: 0 },
+                { id: 'knight2', piece: '♘', x: 6, y: 0 },
+                { id: 'rook2', piece: '♖', x: 7, y: 0 },
+                { id: 'pawn1', piece: '♙', x: 0, y: 1 },
+                { id: 'pawn2', piece: '♙', x: 1, y: 1 },
+                { id: 'pawn3', piece: '♙', x: 2, y: 1 },
+                { id: 'pawn4', piece: '♙', x: 3, y: 1 },
+                { id: 'pawn5', piece: '♙', x: 4, y: 1 },
+                { id: 'pawn6', piece: '♙', x: 5, y: 1 },
+                { id: 'pawn7', piece: '♙', x: 6, y: 1 },
+                { id: 'pawn8', piece: '♙', x: 7, y: 1 },
+                { id: 'rook3', piece: '♜', x: 0, y: 7 },
+                { id: 'knight3', piece: '♞', x: 1, y: 7 },
+                { id: 'bishop3', piece: '♝', x: 2, y: 7 },
+                { id: 'queen2', piece: '♛', x: 3, y: 7 },
+                { id: 'king2', piece: '♚', x: 4, y: 7 },
+                { id: 'bishop4', piece: '♝', x: 5, y: 7 },
+                { id: 'knight4', piece: '♞', x: 6, y: 7 },
+                { id: 'rook4', piece: '♜', x: 7, y: 7 },
+                { id: 'pawn9', piece: '♟', x: 0, y: 6 },
+                { id: 'pawn10', piece: '♟', x: 1, y: 6 },
+                { id: 'pawn11', piece: '♟', x: 2, y: 6 },
+                { id: 'pawn12', piece: '♟', x: 3, y: 6 },
+                { id: 'pawn13', piece: '♟', x: 4, y: 6 },
+                { id: 'pawn14', piece: '♟', x: 5, y: 6 },
+                { id: 'pawn15', piece: '♟', x: 6, y: 6 },
+                { id: 'pawn16', piece: '♟', x: 7, y: 6 },
+            ];
+
+            pieces.forEach((p) => {
+                const pieceElement = document.createElement('div');
+                pieceElement.id = p.id;
+                pieceElement.className = 'piece';
+                pieceElement.textContent = p.piece;
+                document.getElementById('chessboard').appendChild(pieceElement);
+                placePiece(pieceElement, p.x, p.y);
+            });
+
+            playMoves();
+        });
+    </script>
+</body>
+</html>
